@@ -1,0 +1,114 @@
+[
+  {
+    "id": "section-lookup-deposit",
+    "query": "What does Section 8 of the Punjab Rented Premises Act say about the security deposit?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": "Punjab",
+    "expected_document_ids": ["prpa-2009-section-8"],
+    "note": "Exact section lookup, keyword-favorable"
+  },
+  {
+    "id": "section-lookup-eviction",
+    "query": "What does Section 15 of the Punjab Rented Premises Act say about eviction grounds?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": "Punjab",
+    "expected_document_ids": ["prpa-2009-section-15"],
+    "note": "Exact section lookup, keyword-favorable"
+  },
+  {
+    "id": "deposit-rights-broad",
+    "query": "My landlord in Lahore, Punjab kept my security deposit after I moved out. What are my rights?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": "Punjab",
+    "expected_document_ids": ["prpa-2009-section-8", "rent-tribunal-judgment-2018"],
+    "note": "Broad rights question, semantic-favorable"
+  },
+  {
+    "id": "unpaid-wages-broad",
+    "query": "My employer hasn't paid me my wages in two months. What can I do?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": null,
+    "expected_document_ids": ["powa-1936-section-15", "labour-guidance-unpaid-wages"],
+    "note": "Broad rights question, semantic-favorable"
+  },
+  {
+    "id": "wage-payment-timing",
+    "query": "How often must an employer pay wages under the Payment of Wages Act?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": null,
+    "expected_document_ids": ["powa-1936-section-4", "powa-1936-section-5"],
+    "note": "Multi-doc procedural question"
+  },
+  {
+    "id": "wage-deductions",
+    "query": "What deductions can an employer lawfully make from my wages?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": null,
+    "expected_document_ids": ["powa-1936-section-7"],
+    "note": "Keyword-favorable"
+  },
+  {
+    "id": "faulty-product-refund",
+    "query": "I bought a faulty product in Punjab, Pakistan. Can I get a refund?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": "Punjab",
+    "expected_document_ids": ["pcpa-2005-section-4", "pcpa-2005-section-28"],
+    "note": "Broad consumer-law question"
+  },
+  {
+    "id": "valid-contract-elements",
+    "query": "What makes an agreement a legally valid contract under Pakistani law?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": null,
+    "expected_document_ids": ["contract-act-1872-section-10"],
+    "note": "Definition-style question"
+  },
+  {
+    "id": "penalty-clause",
+    "query": "What is a penalty clause in a contract, and can courts reduce it?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": null,
+    "expected_document_ids": ["contract-act-1872-section-74"],
+    "note": "Keyword-favorable"
+  },
+  {
+    "id": "fair-trial-right",
+    "query": "Does the Constitution of Pakistan guarantee a right to a fair trial?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": null,
+    "expected_document_ids": ["constitution-pk-article-10a"],
+    "note": "Constitutional-authority question"
+  },
+  {
+    "id": "india-punjab-eviction",
+    "query": "My landlord in India's Punjab state wants to evict me. What are the legal grounds?",
+    "jurisdiction": "India",
+    "province_or_state": "Punjab",
+    "expected_document_ids": ["india-punjab-rent-act-section-13"],
+    "note": "Jurisdiction contrast: must NOT return the Pakistani Punjab tenancy acts"
+  },
+  {
+    "id": "repealed-ordinance-status",
+    "query": "Is the West Pakistan Urban Rent Restriction Ordinance 1959 still in force in Punjab?",
+    "jurisdiction": "Pakistan",
+    "province_or_state": "Punjab",
+    "expected_document_ids": ["punjab-rent-ordinance-1959-section-13"],
+    "note": "Repealed document should be demoted, not excluded"
+  },
+  {
+    "id": "irrelevant-cooking",
+    "query": "How do I cook chicken biryani?",
+    "jurisdiction": null,
+    "province_or_state": null,
+    "expected_document_ids": [],
+    "note": "Negative case: relevance threshold should reject this"
+  },
+  {
+    "id": "irrelevant-car-repair",
+    "query": "What's the best way to fix a flat tire on my car?",
+    "jurisdiction": null,
+    "province_or_state": null,
+    "expected_document_ids": [],
+    "note": "Negative case: relevance threshold should reject this"
+  }
+]

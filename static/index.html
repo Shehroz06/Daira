@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Diara — Legal AI Consultant</title>
+<style>
+  :root {
+    /* Light theme (default) */
+    --bg: #f7f9f8;
+    --panel: #ffffff;
+    --panel-raised: #ffffff;
+    --border: #e2e8e4;
+    --text: #172019;
+    --text-secondary: #3f4a44;
+    --muted: #6b7970;
+    --accent: #16a34a;
+    --accent-strong: #15803d;
+    --accent-strong-hover: #166534;
+    --accent-soft: #e6f6ec;
+    --on-accent: #ffffff;
+    --user-bubble: #e6f6ec;
+    --user-text: #14532d;
+    --error: #dc2626;
+    --error-soft: #fdecea;
+    --shadow: 0 1px 3px rgba(16, 24, 20, 0.08), 0 1px 2px rgba(16, 24, 20, 0.05);
+    --bg-wash: radial-gradient(1100px 520px at 12% -8%, #e4f8ec 0%, transparent 55%),
+               radial-gradient(900px 500px at 100% 0%, #eef6f1 0%, transparent 50%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10140f;
+      --panel: #171d19;
+      --panel-raised: #1c2420;
+      --border: #283029;
+      --text: #e9efec;
+      --text-secondary: #c3cdc6;
+      --muted: #8a988f;
+      --accent: #34d399;
+      --accent-strong: #34d399;
+      --accent-strong-hover: #6ee7b0;
+      --accent-soft: #17332a;
+      --on-accent: #062013;
+      --user-bubble: #17332a;
+      --user-text: #bdf5da;
+      --error: #f87171;
+      --error-soft: #3a1c1c;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      --bg-wash: radial-gradient(1100px 520px at 12% -8%, rgba(52, 211, 153, 0.07) 0%, transparent 55%),
+                 radial-gradient(900px 500px at 100% 0%, rgba(52, 211, 153, 0.04) 0%, transparent 50%);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #10140f;
+    --panel: #171d19;
+    --panel-raised: #1c2420;
+    --border: #283029;
+    --text: #e9efec;
+    --text-secondary: #c3cdc6;
+    --muted: #8a988f;
+    --accent: #34d399;
+    --accent-strong: #34d399;
+    --accent-strong-hover: #6ee7b0;
+    --accent-soft: #17332a;
+    --on-accent: #062013;
+    --user-bubble: #17332a;
+    --user-text: #bdf5da;
+    --error: #f87171;
+    --error-soft: #3a1c1c;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --bg-wash: radial-gradient(1100px 520px at 12% -8%, rgba(52, 211, 153, 0.07) 0%, transparent 55%),
+               radial-gradient(900px 500px at 100% 0%, rgba(52, 211, 153, 0.04) 0%, transparent 50%);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0; background: var(--bg-wash), var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: flex; flex-direction: column; min-height: 100vh;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  /* The page itself scrolls (the browser's own scrollbar) — header and the
+     input footer stay pinned via position: sticky rather than #chat having
+     its own internal scroll container. */
+  header {
+    padding: 13px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: var(--panel); position: sticky; top: 0; z-index: 10;
+  }
+  header::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 65%);
+    opacity: 0.55;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .brand .logo { width: 26px; height: 26px; flex-shrink: 0; }
+  .brand .brand-text { display: flex; align-items: baseline; gap: 10px; min-width: 0; flex-wrap: wrap; }
+  .brand h1 {
+    margin: 0; font-size: 1.15rem; letter-spacing: -0.01em;
+    color: var(--accent-strong);
+  }
+  .brand span {
+    color: var(--muted); font-size: 0.8rem; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .icon-btn {
+    border: 1px solid var(--border); background: var(--panel-raised);
+    color: var(--text-secondary); border-radius: 999px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1rem; flex-shrink: 0;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+  .icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------------------------------------------------------------- history */
+  #history-overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35);
+    opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 19;
+  }
+  #history-overlay.open { opacity: 1; visibility: visible; }
+
+  #history-drawer {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 320px; max-width: 90vw;
+    background: var(--panel); border-right: 1px solid var(--border);
+    box-shadow: var(--shadow); z-index: 20;
+    display: flex; flex-direction: column;
+    transform: translateX(-100%); transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #history-drawer.open { transform: translateX(0); }
+
+  .history-drawer-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px; border-bottom: 1px solid var(--border);
+  }
+  .history-drawer-header h2 { margin: 0; font-size: 1rem; color: var(--text); }
+
+  #new-chat-btn {
+    border: none; border-radius: 999px; padding: 7px 14px;
+    background: var(--accent-soft); color: var(--accent-strong);
+    font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  #new-chat-btn:hover { background: var(--accent); color: var(--on-accent); }
+
+  #history-list { flex: 1; overflow-y: auto; }
+  .history-empty { padding: 20px 16px; color: var(--muted); font-size: 0.85rem; }
+
+  .history-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background-color 0.15s ease;
+  }
+  .history-item:hover { background: var(--accent-soft); }
+  .history-item-text { flex: 1; min-width: 0; }
+  .history-item-title {
+    color: var(--text); font-size: 0.88rem; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .history-item-date { color: var(--muted); font-size: 0.72rem; margin-top: 2px; }
+  .history-item-delete {
+    border: none; background: transparent; color: var(--text-secondary);
+    cursor: pointer; font-size: 1rem; line-height: 1; padding: 4px 6px;
+    border-radius: 6px; flex-shrink: 0;
+  }
+  .history-item-delete:hover { color: var(--error); background: var(--error-soft); }
+
+  #chat {
+    flex: 1; padding: 20px;
+    display: flex; flex-direction: column; gap: 14px;
+    max-width: 860px; width: 100%; margin: 0 auto;
+  }
+
+  .landing {
+    margin: auto; display: flex; flex-direction: column; align-items: center;
+    gap: 30px; max-width: 860px; width: 100%; padding: 20px;
+  }
+  .landing-logo { width: 44px; height: 44px; }
+  #landing-slot { width: 100%; }
+  .landing h2 {
+    color: var(--text); font-size: 1.6rem; font-weight: 600;
+    margin: 0; letter-spacing: -0.01em;
+  }
+
+  .msg {
+    padding: 12px 16px; border-radius: 12px; line-height: 1.6;
+    white-space: pre-wrap; word-wrap: break-word; box-shadow: var(--shadow);
+    animation: message-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes message-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+  }
+  .user {
+    background: var(--user-bubble); color: var(--user-text);
+    align-self: flex-end; max-width: 75%; border-bottom-right-radius: 4px;
+  }
+  .bot {
+    background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    align-self: flex-start; max-width: 92%; border-bottom-left-radius: 4px;
+  }
+  .bot.pending::after {
+    content: ""; display: inline-block; width: 6px; height: 6px;
+    margin-left: 4px; border-radius: 50%; background: var(--accent);
+    animation: pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.25; } 50% { opacity: 1; }
+  }
+
+  .error-text { color: var(--error); }
+
+  form {
+    display: flex; gap: 10px; padding: 14px 20px;
+    border-top: 1px solid var(--border); max-width: 860px;
+    width: 100%; margin: 0 auto; background: var(--bg);
+    animation: message-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  form.centered {
+    border-top: none; padding: 0 20px; background: transparent;
+    animation: none;
+  }
+  input {
+    flex: 1; padding: 12px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--panel);
+    color: var(--text); font-size: 0.95rem; outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input::placeholder { color: var(--muted); }
+  input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  button[type="submit"] {
+    padding: 12px 22px; border-radius: 10px; border: none;
+    background: var(--accent-strong); color: var(--on-accent); font-size: 0.95rem;
+    font-weight: 600; cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+  }
+  button[type="submit"]:hover:not(:disabled) { background: var(--accent-strong-hover); }
+  button[type="submit"]:active:not(:disabled) { transform: scale(0.96); }
+  button[type="submit"]:disabled { opacity: 0.5; cursor: default; }
+  button[type="submit"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .disclaimer {
+    text-align: center; font-size: 0.7rem; color: var(--muted);
+    padding: 0 20px 12px; background: var(--bg);
+  }
+
+  #footer-bar { position: sticky; bottom: 0; z-index: 10; background: var(--bg); }
+</style>
+</head>
+<body>
+<header>
+  <button id="history-toggle" class="icon-btn" type="button" aria-label="Chat history" title="Chat history">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 3v5h5" />
+      <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" />
+      <path d="M12 7v5l4 2" />
+    </svg>
+  </button>
+  <div class="brand">
+    <img class="logo" src="/static/logo.svg" alt="" />
+    <div class="brand-text">
+      <h1>Diara</h1>
+      <span>A legal assistant</span>
+    </div>
+  </div>
+  <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
+</header>
+
+<div id="chat">
+  <div class="landing" id="landing">
+    <img class="landing-logo" src="/static/logo.svg" alt="" />
+    <h2>What's on your mind?</h2>
+    <div id="landing-slot"></div>
+  </div>
+</div>
+
+<div id="history-overlay"></div>
+<aside id="history-drawer" aria-hidden="true">
+  <div class="history-drawer-header">
+    <h2>Chats</h2>
+    <button id="new-chat-btn" type="button">+ New chat</button>
+  </div>
+  <div id="history-list"></div>
+</aside>
+
+<div id="footer-bar">
+  <form id="form">
+    <input id="input" placeholder="Ask a legal question…" autocomplete="off" />
+    <button id="send" type="submit">Send</button>
+  </form>
+  <div class="disclaimer" id="disclaimer">
+    Diara provides general legal information, not legal advice. For important matters, consult a qualified lawyer.
+  </div>
+</div>
+
+<script>
+const chat = document.getElementById("chat");
+const landing = document.getElementById("landing");
+const landingSlot = document.getElementById("landing-slot");
+const disclaimer = document.getElementById("disclaimer");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const send = document.getElementById("send");
+const themeToggle = document.getElementById("theme-toggle");
+const historyToggle = document.getElementById("history-toggle");
+const historyOverlay = document.getElementById("history-overlay");
+const historyDrawer = document.getElementById("history-drawer");
+const historyList = document.getElementById("history-list");
+const newChatBtn = document.getElementById("new-chat-btn");
+
+function newSessionId() {
+  return "web-" + Math.random().toString(36).slice(2, 10);
+}
+let sessionId = newSessionId();
+
+// Start with the input centered alongside the landing heading; once the
+// first message is sent, dockForm() moves it back to its normal footer spot.
+landingSlot.appendChild(form);
+form.classList.add("centered");
+
+function dockForm() {
+  if (!form.classList.contains("centered")) return;
+  form.classList.remove("centered");
+  disclaimer.parentNode.insertBefore(form, disclaimer);
+  input.placeholder = "Ask a legal question… e.g. My landlord kept my deposit. What are my rights?";
+}
+
+// ---------------------------------------------------------------- theming
+const THEME_KEY = "diara-theme";
+const root = document.documentElement;
+
+function systemPrefersDark() {
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+function currentTheme() {
+  return root.getAttribute("data-theme") || (systemPrefersDark() ? "dark" : "light");
+}
+
+function applyThemeIcon() {
+  const isDark = currentTheme() === "dark";
+  themeToggle.textContent = isDark ? "☀️" : "🌙";
+  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+}
+
+(function initTheme() {
+  const stored = localStorage.getItem(THEME_KEY);
+  if (stored === "light" || stored === "dark") {
+    root.setAttribute("data-theme", stored);
+  }
+  applyThemeIcon();
+})();
+
+themeToggle.addEventListener("click", () => {
+  const next = currentTheme() === "dark" ? "light" : "dark";
+  root.setAttribute("data-theme", next);
+  localStorage.setItem(THEME_KEY, next);
+  applyThemeIcon();
+});
+
+// ---------------------------------------------------------------- chat history
+
+function formatChatDate(unixSeconds) {
+  return new Date(unixSeconds * 1000).toLocaleString(undefined, {
+    month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+  });
+}
+
+async function fetchChats() {
+  try {
+    const resp = await fetch("/chats");
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    return data.chats || [];
+  } catch {
+    return [];
+  }
+}
+
+function renderChatList(chats) {
+  historyList.innerHTML = "";
+  if (!chats.length) {
+    const empty = document.createElement("div");
+    empty.className = "history-empty";
+    empty.textContent = "No saved chats yet.";
+    historyList.appendChild(empty);
+    return;
+  }
+  for (const c of chats) {
+    const item = document.createElement("div");
+    item.className = "history-item";
+
+    const textWrap = document.createElement("div");
+    textWrap.className = "history-item-text";
+    const title = document.createElement("div");
+    title.className = "history-item-title";
+    title.textContent = c.title || "Untitled chat";
+    const date = document.createElement("div");
+    date.className = "history-item-date";
+    date.textContent = formatChatDate(c.updated_at);
+    textWrap.appendChild(title);
+    textWrap.appendChild(date);
+
+    const del = document.createElement("button");
+    del.className = "history-item-delete";
+    del.type = "button";
+    del.setAttribute("aria-label", "Delete chat");
+    del.textContent = "×";
+    del.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteChat(c.id);
+    });
+
+    item.appendChild(textWrap);
+    item.appendChild(del);
+    item.addEventListener("click", () => openChat(c.id));
+    historyList.appendChild(item);
+  }
+}
+
+async function refreshChatList() {
+  renderChatList(await fetchChats());
+}
+
+function openHistoryDrawer() {
+  historyDrawer.classList.add("open");
+  historyOverlay.classList.add("open");
+  historyDrawer.setAttribute("aria-hidden", "false");
+  refreshChatList();
+}
+
+function closeHistoryDrawer() {
+  historyDrawer.classList.remove("open");
+  historyOverlay.classList.remove("open");
+  historyDrawer.setAttribute("aria-hidden", "true");
+}
+
+async function openChat(chatId) {
+  let data;
+  try {
+    const resp = await fetch("/chats/" + encodeURIComponent(chatId));
+    if (!resp.ok) throw new Error("not found");
+    data = await resp.json();
+  } catch {
+    const empty = document.createElement("div");
+    empty.className = "history-empty error-text";
+    empty.textContent = "Couldn't load that chat.";
+    historyList.prepend(empty);
+    return;
+  }
+
+  sessionId = data.id;
+  landing.remove();
+  chat.innerHTML = "";
+  dockForm();
+  for (const m of data.messages) {
+    const div = addMsg(m.role === "user" ? "user" : "bot", m.text);
+    if (m.role === "assistant") {
+      div.innerHTML = renderMarkdownLite(m.text);
+    }
+  }
+  closeHistoryDrawer();
+  stuckToBottom = true;
+  scrollToBottomIfStuck();
+}
+
+function startNewChat() {
+  sessionId = newSessionId();
+  chat.innerHTML = "";
+  chat.appendChild(landing);
+  landingSlot.appendChild(form);
+  form.classList.add("centered");
+  input.placeholder = "Ask a legal question…";
+  closeHistoryDrawer();
+}
+
+async function deleteChat(chatId) {
+  if (!confirm("Delete this chat? This can't be undone.")) return;
+  try {
+    await fetch("/chats/" + encodeURIComponent(chatId), { method: "DELETE" });
+  } catch {
+    // ignore — refreshChatList() below will reflect whatever the server has
+  }
+  if (chatId === sessionId) {
+    startNewChat();
+  }
+  refreshChatList();
+}
+
+historyToggle.addEventListener("click", openHistoryDrawer);
+historyOverlay.addEventListener("click", closeHistoryDrawer);
+newChatBtn.addEventListener("click", startNewChat);
+
+// ---------------------------------------------------------------- chat
+
+// The page itself scrolls (see the #chat comment above), so "stick to
+// bottom" tracks window scroll position, not any element's scrollTop.
+let stuckToBottom = true;
+const STICK_THRESHOLD = 80;
+
+window.addEventListener("scroll", () => {
+  const distanceFromBottom =
+    document.documentElement.scrollHeight - window.scrollY - window.innerHeight;
+  stuckToBottom = distanceFromBottom < STICK_THRESHOLD;
+});
+
+function scrollToBottomIfStuck() {
+  if (stuckToBottom) {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  }
+}
+
+// Minimal, safe markdown: escape HTML first, then convert **bold** and
+// *italic*. Re-run on the full accumulated text on every chunk (rather than
+// appending pre-rendered HTML) so a marker split across two stream chunks
+// (e.g. "**25" then " years**") still renders correctly once both arrive.
+function renderMarkdownLite(text) {
+  const escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  return escaped
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^*])\*([^*]+?)\*(?!\*)/g, "$1<em>$2</em>");
+}
+
+function addMsg(cls, text) {
+  dockForm();
+  landing.remove();
+  const div = document.createElement("div");
+  div.className = "msg " + cls;
+  div.textContent = text;
+  chat.appendChild(div);
+  scrollToBottomIfStuck();
+  return div;
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const message = input.value.trim();
+  if (!message) return;
+  input.value = "";
+  send.disabled = true;
+  stuckToBottom = true;
+  addMsg("user", message);
+  const bot = addMsg("bot pending", "");
+  let rawAnswer = "";
+
+  function renderBot() {
+    bot.innerHTML = renderMarkdownLite(rawAnswer);
+  }
+
+  try {
+    const resp = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, session_id: sessionId }),
+    });
+    if (!resp.ok || !resp.body) {
+      bot.classList.remove("pending");
+      bot.innerHTML = "";
+      bot.appendChild(Object.assign(document.createElement("span"), {
+        className: "error-text",
+        textContent: "Request failed (" + resp.status + "). Is the server running?",
+      }));
+      return;
+    }
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let gotFirstChunk = false;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        let ev;
+        try { ev = JSON.parse(line); } catch { continue; }
+        if (ev.type === "chunk") {
+          if (!gotFirstChunk) { bot.classList.remove("pending"); gotFirstChunk = true; }
+          rawAnswer += ev.text;
+          renderBot();
+          scrollToBottomIfStuck();
+        } else if (ev.type === "error") {
+          bot.classList.remove("pending");
+          rawAnswer += (rawAnswer ? "\n\n" : "") + "⚠ " + ev.message;
+          renderBot();
+          scrollToBottomIfStuck();
+        }
+      }
+    }
+    bot.classList.remove("pending");
+    // No separate sources block here on purpose — the model already ends
+    // its own answer with a "Sources:" line per the system prompt, and a
+    // second independently-rendered list (meta.sources, which is every
+    // *retrieved* candidate, not just the ones actually cited) duplicated
+    // and sometimes disagreed with it.
+  } catch (err) {
+    bot.classList.remove("pending");
+    rawAnswer += (rawAnswer ? "\n" : "") + "⚠ Connection error: " + err.message;
+    renderBot();
+    scrollToBottomIfStuck();
+  } finally {
+    send.disabled = false;
+    input.focus();
+    if (historyDrawer.classList.contains("open")) refreshChatList();
+  }
+});
+input.focus();
+</script>
+</body>
+</html>
