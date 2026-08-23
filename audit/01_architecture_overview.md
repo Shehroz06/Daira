@@ -6,7 +6,7 @@ on the date this document was written.
 
 ## 1. System summary
 
-Diara is a local-first legal RAG assistant for Pakistan-focused legal questions.
+Daira is a local-first legal RAG assistant for Pakistan-focused legal questions.
 FastAPI backend, hybrid BM25+vector retrieval over an in-memory NumPy index (no
 external vector database), Gemini-preferred/Ollama-fallback generation, vanilla-JS
 frontend with NDJSON streaming. No authentication, single-process, in-memory
@@ -20,7 +20,7 @@ Browser (static/index.html)
     ▼
 main.py                    FastAPI routes: /, /chat, /health
     ▼
-app/diara.py :: chat()     orchestrates one turn
+app/daira.py :: chat()     orchestrates one turn
     │
     ├─ app/legal_query.py :: understand()
     │      heuristic (regex/keyword) OR one LLM call, decided by is_complex()
@@ -52,7 +52,7 @@ to the LLM. This is a fact to carry into Phase 7/12, not a conclusion about it y
 ```
 main.py                 FastAPI entrypoint (98 lines)
 app/
-  diara.py               turn orchestration, session state (218 lines)
+  daira.py               turn orchestration, session state (218 lines)
   legal_query.py          query understanding (257 lines)
   rag.py                  hybrid retrieval engine (411 lines)
   legal_ranker.py         authority/jurisdiction/date re-scoring (126 lines)
@@ -271,10 +271,10 @@ query at all.
 GEMINI_MODEL, GEMINI_ENABLED, GEMINI_MAX_RPM
 OLLAMA_URL, OLLAMA_MODEL, OLLAMA_EMBED_MODEL
 LLM_PROVIDER (auto|gemini|ollama)
-DIARA_NUM_THREADS, DIARA_DEBUG
-DIARA_MIN_COSINE (checked-in: 0.45, code default: 0.52)
-DIARA_MIN_BM25   (checked-in: 1.0,  code default: 4.5)
-DIARA_DEFAULT_JURISDICTION (default "Pakistan"), DIARA_DEFAULT_PROVINCE (default "Punjab")
+DAIRA_NUM_THREADS, DAIRA_DEBUG
+DAIRA_MIN_COSINE (checked-in: 0.45, code default: 0.52)
+DAIRA_MIN_BM25   (checked-in: 1.0,  code default: 4.5)
+DAIRA_DEFAULT_JURISDICTION (default "Pakistan"), DAIRA_DEFAULT_PROVINCE (default "Punjab")
 ```
 
 The threshold discrepancy between `.env` and the code defaults is flagged

@@ -1,4 +1,4 @@
-"""Legal query understanding for Diara.
+"""Legal query understanding for Daira.
 
 Converts a natural-language question (plus bounded conversation context)
 into a validated structured legal intent:
@@ -26,7 +26,7 @@ from typing import Optional
 from .llm import generate_structured
 from .prompts import QUERY_UNDERSTANDING_SYSTEM, build_query_understanding_prompt
 
-logger = logging.getLogger("diara.legal_query")
+logger = logging.getLogger("daira.legal_query")
 
 ALLOWED_FIELDS = {
     "jurisdiction", "province_or_state", "legal_domain", "issue",

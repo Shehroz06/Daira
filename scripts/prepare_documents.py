@@ -1,4 +1,4 @@
-"""Prepare the Diara legal document corpus.
+"""Prepare the Daira legal document corpus.
 
 Produces data/documents.json — a list of legal document *chunks*, each with
 rich metadata (jurisdiction, domain, authority level, status, dates...).

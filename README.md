@@ -1,12 +1,12 @@
-# Diara
+# Daira
 
-Diara is a local-first legal information and research assistant. It answers
+Daira is a local-first legal information and research assistant. It answers
 legal questions using Retrieval-Augmented Generation: every substantive
 answer is grounded in a local legal corpus, retrieved and ranked *before*
 generation — it never answers from an LLM's general training knowledge
 alone.
 
-Diara is not a lawyer and does not create an attorney-client relationship.
+Daira is not a lawyer and does not create an attorney-client relationship.
 See [Limitations](#limitations) before relying on anything it says.
 
 ## Contents
@@ -23,10 +23,10 @@ See [Limitations](#limitations) before relying on anything it says.
 ## Project structure
 
 ```text
-Diara/
+Daira/
 ├── main.py                  FastAPI entrypoint (/, /chat, /health)
 ├── app/                     application package
-│   ├── diara.py               orchestration, session context
+│   ├── daira.py               orchestration, session context
 │   ├── legal_query.py         query understanding (heuristic + LLM)
 │   ├── rag.py                 hybrid retrieval (vector + BM25 + RRF)
 │   ├── legal_ranker.py        authority/jurisdiction/date ranking
@@ -67,7 +67,7 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 # 3. Create your local config and edit it (all fields are optional —
-#    Diara runs on Ollama alone with no .env at all)
+#    Daira runs on Ollama alone with no .env at all)
 cp .env.example .env
 nano .env
 
@@ -86,7 +86,7 @@ uvicorn main:app --reload
 Then open `http://localhost:8000`.
 
 To use Gemini as the preferred provider, set `GEMINI_API_KEY` in `.env`.
-Diara works with Ollama alone if it's unset.
+Daira works with Ollama alone if it's unset.
 
 ## Configuration
 
@@ -97,15 +97,15 @@ All configuration is via environment variables (see `.env.example`):
 | `GEMINI_API_KEY` | *(empty)* | Enables Gemini when set |
 | `GEMINI_MODEL` | `gemini-2.0-flash` | Gemini model name |
 | `GEMINI_ENABLED` | `true` | Master on/off switch for Gemini |
-| `GEMINI_MAX_RPM` | `15` | Client-side cap on Gemini calls/minute — Diara falls back to Ollama proactively once hit, instead of waiting on a 429 |
+| `GEMINI_MAX_RPM` | `15` | Client-side cap on Gemini calls/minute — Daira falls back to Ollama proactively once hit, instead of waiting on a 429 |
 | `OLLAMA_URL` | `http://localhost:11434` | Local Ollama server |
 | `OLLAMA_MODEL` | `llama3.2` | Ollama generation model |
 | `OLLAMA_EMBED_MODEL` | `nomic-embed-text` | Ollama embedding model |
 | `LLM_PROVIDER` | `auto` | `auto` \| `gemini` \| `ollama` |
-| `DIARA_NUM_THREADS` | *(unset)* | Caps NumPy/BLAS threads for vector search |
-| `DIARA_DEBUG` | `false` | Adds pipeline-internals `debug` events to `/chat` |
-| `DIARA_MIN_COSINE` | `0.52` | Vector-search relevance floor |
-| `DIARA_MIN_BM25` | `4.5` | Keyword-search relevance floor |
+| `DAIRA_NUM_THREADS` | *(unset)* | Caps NumPy/BLAS threads for vector search |
+| `DAIRA_DEBUG` | `false` | Adds pipeline-internals `debug` events to `/chat` |
+| `DAIRA_MIN_COSINE` | `0.52` | Vector-search relevance floor |
+| `DAIRA_MIN_BM25` | `4.5` | Keyword-search relevance floor |
 
 ## Testing
 
@@ -172,7 +172,7 @@ changed, not the whole corpus every time.
 - There is no authentication — the app is intended for local, single-user
   use.
 - This is a demonstration project, not a vetted legal research tool. Do not
-  use Diara's answers as a substitute for advice from a qualified lawyer.
+  use Daira's answers as a substitute for advice from a qualified lawyer.
 
 ## License
 

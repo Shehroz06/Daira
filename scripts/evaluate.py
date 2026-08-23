@@ -1,4 +1,4 @@
-"""Retrieval evaluation for Diara.
+"""Retrieval evaluation for Daira.
 
 Runs the golden query set (tests/golden_dataset.json) through the live retrieval
 pipeline (rag.index.retrieve) and reports Recall@1/3/5, Hit Rate, jurisdiction

@@ -1,4 +1,4 @@
-"""Legal RAG retrieval for Diara.
+"""Legal RAG retrieval for Daira.
 
 Hybrid local retrieval:
 
@@ -49,7 +49,7 @@ import numpy as np
 from .legal_ranker import authority_rank
 from .llm import ollama_embed
 
-logger = logging.getLogger("diara.rag")
+logger = logging.getLogger("daira.rag")
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -71,9 +71,9 @@ RRF_K = 60             # standard RRF constant
 FINAL_K = 5            # sources handed to the LLM
 # Minimum cosine similarity for a chunk to count as "relevant at all".
 # Below this, vector hits are noise (e.g. cooking questions vs legal corpus).
-MIN_COSINE = float(os.getenv("DIARA_MIN_COSINE", "0.52"))
+MIN_COSINE = float(os.getenv("DAIRA_MIN_COSINE", "0.52"))
 # A candidate that only appears via keyword match must still clear this.
-MIN_BM25 = float(os.getenv("DIARA_MIN_BM25", "4.5"))
+MIN_BM25 = float(os.getenv("DAIRA_MIN_BM25", "4.5"))
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 

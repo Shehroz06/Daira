@@ -1,4 +1,4 @@
-"""Diara application logic.
+"""Daira application logic.
 
 Orchestrates one chat turn:
 
@@ -17,7 +17,7 @@ Orchestrates one chat turn:
     grounded prompt → llm.stream_generate()
         │
         ▼
-    streamed chunks (+ debug event when DIARA_DEBUG)
+    streamed chunks (+ debug event when DAIRA_DEBUG)
 
 Conversation context is bounded: a rolling window of recent turns plus
 sticky facts (jurisdiction) extracted along the way.
@@ -35,9 +35,9 @@ from . import chat_store, legal_query, prompts
 from .llm import LLMError, stream_generate
 from .rag import index
 
-logger = logging.getLogger("diara.core")
+logger = logging.getLogger("daira.core")
 
-DEBUG = os.getenv("DIARA_DEBUG", "false").strip().lower() in ("1", "true", "yes")
+DEBUG = os.getenv("DAIRA_DEBUG", "false").strip().lower() in ("1", "true", "yes")
 
 MAX_TURNS_IN_CONTEXT = 4          # last N user/assistant exchanges
 MAX_CONTEXT_CHARS = 1200          # hard cap on context summary size
@@ -46,8 +46,8 @@ MAX_SESSIONS = 200                # bound in-memory session store
 # This deployment is scoped to a specific jurisdiction, so default rather
 # than interrupt every unscoped question with the jurisdiction gate — set
 # either to "" to restore the original ask-if-unknown behavior.
-DEFAULT_JURISDICTION = os.getenv("DIARA_DEFAULT_JURISDICTION", "Pakistan").strip() or None
-DEFAULT_PROVINCE = os.getenv("DIARA_DEFAULT_PROVINCE", "Punjab").strip() or None
+DEFAULT_JURISDICTION = os.getenv("DAIRA_DEFAULT_JURISDICTION", "Pakistan").strip() or None
+DEFAULT_PROVINCE = os.getenv("DAIRA_DEFAULT_PROVINCE", "Punjab").strip() or None
 
 _HIGH_STAKES_WORDS = (
     "arrest", "criminal charge", "deadline", "court date", "hearing",
@@ -74,7 +74,7 @@ class Session:
         for user, assistant in self.turns[-MAX_TURNS_IN_CONTEXT:]:
             parts.append(f"User said: {user[:200]}")
             if assistant:
-                parts.append(f"Diara answered (summary): {assistant[:200]}")
+                parts.append(f"Daira answered (summary): {assistant[:200]}")
         if not parts:
             return None
         return "\n".join(parts)[:MAX_CONTEXT_CHARS]
@@ -103,7 +103,7 @@ def chat(question: str, session_id: str = "default") -> Iterator[dict]:
 
         {"type": "meta", ...}     provider/sources info (first)
         {"type": "chunk", "text": ...}  streamed answer text
-        {"type": "debug", ...}    pipeline internals (only when DIARA_DEBUG)
+        {"type": "debug", ...}    pipeline internals (only when DAIRA_DEBUG)
         {"type": "error", ...}    controlled error message
     """
     t_start = time.time()

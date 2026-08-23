@@ -1,4 +1,4 @@
-# Diara Legal RAG — Forensic Audit & Recovery: Final Report
+# Daira Legal RAG — Forensic Audit & Recovery: Final Report
 
 15-phase audit of four reported retrieval failures. Phases 1-12 (read-only
 forensic audit) and 14 (regression testing) are summarized here; full
@@ -8,7 +8,7 @@ evidence lives in the per-phase files listed at the end. Phase 13
 ## 1. Architecture (see `01_architecture_overview.md`)
 
 ```
-USER -> FastAPI (main.py) -> app/diara.py (session/orchestration)
+USER -> FastAPI (main.py) -> app/daira.py (session/orchestration)
       -> app/legal_query.py (heuristic fast-path, or one LLM call for
          complex queries — jurisdiction/domain/facts extraction)
       -> app/rag.py (BM25 inverted index + vector cosine search ->

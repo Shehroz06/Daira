@@ -1,4 +1,4 @@
-"""Legal authority ranking for Diara.
+"""Legal authority ranking for Daira.
 
 Retrieved candidates are re-scored by combining:
 

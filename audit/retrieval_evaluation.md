@@ -72,7 +72,7 @@ for this query at all. `legal_domain: None` is the *correct* detection
 (the question genuinely doesn't specify a domain), but the current system
 has no mechanism to act on "domain is unknown and the question is
 too broad to answer safely" the way it already does have a mechanism for
-"jurisdiction is unknown" (`app/diara.py`'s jurisdiction gate). This is a
+"jurisdiction is unknown" (`app/daira.py`'s jurisdiction gate). This is a
 **query-understanding / dialogue-design gap** (Phase 8/9 territory), not
 a scoring or index defect. Carried into Phase 12 as an architecture
 recommendation (an ambiguity gate, symmetric to the existing jurisdiction

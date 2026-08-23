@@ -1,4 +1,4 @@
-"""Build the Diara embeddings index.
+"""Build the Daira embeddings index.
 
 Embeds every corpus file — the base data/documents.json plus every shard
 under data/corpus/ — with the local Ollama embedding model, L2-normalizes,

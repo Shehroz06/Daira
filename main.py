@@ -1,4 +1,4 @@
-"""Diara — FastAPI entrypoint.
+"""Daira — FastAPI entrypoint.
 
 Endpoints:
     GET    /                -> static frontend
@@ -22,10 +22,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Must run before any os.getenv() call below (and before numpy is imported
-# transitively via diara -> rag) for .env values to take effect.
+# transitively via daira -> rag) for .env values to take effect.
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
-_num_threads = os.getenv("DIARA_NUM_THREADS", "").strip()
+_num_threads = os.getenv("DAIRA_NUM_THREADS", "").strip()
 if _num_threads:
     for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
         os.environ.setdefault(_var, _num_threads)
@@ -35,15 +35,15 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from app import chat_store, diara
+from app import chat_store, daira
 from app.llm import LLM_PROVIDER, OLLAMA_MODEL, gemini_available
 from app.rag import index
 
 logging.basicConfig(
-    level=logging.DEBUG if os.getenv("DIARA_DEBUG", "").lower() in ("1", "true") else logging.INFO,
+    level=logging.DEBUG if os.getenv("DAIRA_DEBUG", "").lower() in ("1", "true") else logging.INFO,
     format="%(asctime)s %(name)s %(levelname)s %(message)s",
 )
-logger = logging.getLogger("diara.main")
+logger = logging.getLogger("daira.main")
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
@@ -58,7 +58,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Diara — Legal AI Consultant", lifespan=lifespan)
+app = FastAPI(title="Daira — Legal AI Consultant", lifespan=lifespan)
 
 
 class ChatRequest(BaseModel):
@@ -72,7 +72,7 @@ async def chat(req: ChatRequest):
 
     def event_stream():
         try:
-            for event in diara.chat(req.message, req.session_id):
+            for event in daira.chat(req.message, req.session_id):
                 yield json.dumps(event, ensure_ascii=False) + "\n"
         except Exception:
             # Controlled error — never leak a stack trace to the client.

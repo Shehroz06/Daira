@@ -136,7 +136,7 @@ def test_heuristic_query_self_contained_question_ignores_unrelated_context():
     new, unrelated question."""
     context = ("The user's jurisdiction is Punjab, Pakistan.\n"
                "User said: what is the minimum punishment of murder?\n"
-               "Diara answered (summary): Under Pakistan law, the punishment for "
+               "Daira answered (summary): Under Pakistan law, the punishment for "
                "murder (qatl-i-amd) includes death as qisas, death or imprisonment "
                "for life as ta'zir depending on circumstances.")
     lq = _heuristic_query("what is my minimum wage?", context)
@@ -150,7 +150,7 @@ def test_heuristic_query_bare_jurisdiction_reply_still_uses_context():
     """A reply with no domain signal of its own (just answering the
     jurisdiction gate) still needs context to recover the actual topic."""
     context = ("User said: what is the minimum punishment of murder?\n"
-               "Diara answered (summary): Under Pakistan law...")
+               "Daira answered (summary): Under Pakistan law...")
     lq = _heuristic_query("in Pakistan", context)
     assert lq.legal_domain == "criminal_law"
     assert "murder" in lq.retrieval_query

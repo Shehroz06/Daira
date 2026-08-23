@@ -1,4 +1,4 @@
-"""LLM provider layer for Diara.
+"""LLM provider layer for Daira.
 
 Exposes a provider-agnostic API:
 
@@ -16,7 +16,7 @@ invalid response, malformed JSON) degrade gracefully to Ollama. Callers only
 see LLMError when *no* provider can serve the request.
 
 Gemini calls are also proactively throttled client-side (GEMINI_MAX_RPM) so
-Diara stops calling Gemini *before* Google's own rate limit would reject the
+Daira stops calling Gemini *before* Google's own rate limit would reject the
 request — a skipped call and an instant Ollama fallback beats a wasted
 round-trip that ends in a 429.
 """
@@ -39,7 +39,7 @@ from dotenv import load_dotenv
 # (uvicorn from the project root, or a script run from scripts/).
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-logger = logging.getLogger("diara.llm")
+logger = logging.getLogger("daira.llm")
 
 # --------------------------------------------------------------------------
 # Configuration

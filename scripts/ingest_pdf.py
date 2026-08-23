@@ -1,4 +1,4 @@
-"""Ingest a legal PDF into the Diara corpus, chunked by Section/Article.
+"""Ingest a legal PDF into the Daira corpus, chunked by Section/Article.
 
 Generalized from the original Constitution-only script: each source is a
 SourceConfig describing its metadata (Act name, jurisdiction, domain, year,

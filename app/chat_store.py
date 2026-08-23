@@ -1,11 +1,11 @@
-"""Persistent chat history for Diara.
+"""Persistent chat history for Daira.
 
-Separate from app.diara's in-memory Session (which stays bounded/ephemeral,
+Separate from app.daira's in-memory Session (which stays bounded/ephemeral,
 used only to give the LLM short-term conversational context). This module
 holds the full, durable transcript that the frontend's history drawer lists,
 opens, and deletes:
 
-    diara.chat()
+    daira.chat()
         │  (question, full answer, sources, provider)
         ▼
     record_turn() ──upsert──▶  chats(id, title, created_at, updated_at)
@@ -30,7 +30,7 @@ import time
 from pathlib import Path
 from typing import Optional
 
-logger = logging.getLogger("diara.chat_store")
+logger = logging.getLogger("daira.chat_store")
 
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "chats.db"
 
