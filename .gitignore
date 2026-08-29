@@ -6,3 +6,6 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 .DS_Store
+
+# Internal audit notes — not part of the shipped project
+audit/
